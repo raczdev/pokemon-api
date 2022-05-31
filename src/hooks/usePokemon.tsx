@@ -26,8 +26,6 @@ interface ContextDataProps {
     pokemons: GetRootResultsProps[];
     nextPage: () => void,
     loading: boolean,
-    findPokemon: (pokemon: string) => void,
-    notFound: boolean,
 }
 
 interface ProviderProps {
@@ -39,14 +37,12 @@ export const PokemonContext = createContext<ContextDataProps>({} as ContextDataP
 export function PokemonProvider({children}: ProviderProps){
     const [pokemons, setPokemons] = useState<GetRootResultsProps[]>([])
     const [nextUrl, setNextUrl] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [notFound, setNotFound] = useState(true)
-
-   
+    const [loading, setLoading] = useState(false)   
 
     useEffect(() => {
         const getPokemon = async () => {
             const res = await api.get('/pokemon/')
+            console.log(res)
             setNextUrl(res.data.next)
             res.data.results.forEach(async (pokemon:GetRootResultsProps) => {
                 const poke = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`)
@@ -67,18 +63,8 @@ export function PokemonProvider({children}: ProviderProps){
         })
     }
 
-    const findPokemon = async (pokemon: string) => {
-        const find = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pokemon}`)
-        setPokemons([find.data])
-        if (find) {
-            setNotFound(false)
-        } 
-    }
-
-    
-
     return (
-        <PokemonContext.Provider value={{ pokemons, nextPage, loading, findPokemon, notFound}}>
+        <PokemonContext.Provider value={{ pokemons, nextPage, loading}}>
             {children}
         </PokemonContext.Provider>
     )

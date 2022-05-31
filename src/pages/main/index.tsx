@@ -1,6 +1,5 @@
-import { FormEvent, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import 'react-toastify/dist/ReactToastify.css';
-import { toast } from "react-toastify"
 import { PokemonContext } from "../../hooks/usePokemon"
 import { List } from "../list"
 import { Container } from "./styles"
@@ -8,22 +7,8 @@ import { Container } from "./styles"
 
 export const Main: React.FC = () => {
 
-    const { nextPage, loading, pokemons, findPokemon, notFound } = useContext(PokemonContext)
-
+    const { nextPage, loading, pokemons } = useContext(PokemonContext)
     const [search, setSearch] = useState("")
-
-    const handleSearch = (event: FormEvent) => {
-
-        event.preventDefault();
-
-        if (search !== "") {
-            findPokemon(search)
-            setSearch("")
-        }
-        if (notFound) {
-            toast.warn("That is not a pokemon")
-        }        
-    }
     
     return (
         <Container>
@@ -31,25 +16,19 @@ export const Main: React.FC = () => {
                 <a href="/">
                     <img src="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png" alt="pokeapi logo" />
                 </a>
-                <form className="searchbar" onSubmit={handleSearch}>
+                <div className="searchbar">
                     <label htmlFor="input-searchbar" className="sr-only">searchbar input</label>
                     <input 
                         type="text" 
                         id="input-searchbar" 
-                        placeholder="do your search!"
+                        placeholder="Search..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => e.target.value[0] !== ' ' ? setSearch(e.target.value) : null}
                     />
-                    <button
-                        disabled={(!search)}
-                        type="submit"
-                    >
-                        search
-                    </button>
-                </form>  
+                </div>  
             </div>
             <div className="list">
-                {pokemons.map((pokemon) => {
+                {pokemons.filter(pokemon => pokemon.name.toLocaleLowerCase().includes(search)).map((pokemon) => {
                     return (
                         <List 
                             key={pokemon.id}

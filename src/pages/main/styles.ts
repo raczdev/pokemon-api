@@ -68,25 +68,6 @@ export const Container = styled.div`
                     color: #969cb3;
                 }
             }
-
-            button {
-                padding: 0 1.5rem;
-                height: 2rem;
-
-                background: #6933ff;
-                color: #fff;
-                border-radius: 0.25rem;
-                border: 0;
-
-                font-size: 1rem;
-                font-weight: 600;
-
-                transition: filter 0.2s;
-
-                &:hover {
-                    filter: brightness(0.9);
-                }
-            }
         }
     }
 `;
