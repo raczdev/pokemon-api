@@ -13,9 +13,9 @@ export const Main: React.FC = () => {
     return (
         <Container>
             <div className="logo-searchbar"> 
-                <a href="/">
+                <span className="pointer">
                     <img src="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png" alt="pokeapi logo" />
-                </a>
+                </span>
                 <div className="searchbar">
                     <label htmlFor="input-searchbar" className="sr-only">searchbar input</label>
                     <input 
