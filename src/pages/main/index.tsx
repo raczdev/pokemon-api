@@ -1,15 +1,21 @@
-import { useContext, useState } from "react"
-import 'react-toastify/dist/ReactToastify.css';
-import { PokemonContext } from "../../hooks/usePokemon"
-import { List } from "../list"
-import { Container } from "./styles"
-
+import { useContext, useState, useEffect } from "react";
+import { PokemonContext } from "../../hooks/usePokemon";
+import { List } from "../list";
+import { Container } from "./styles";
 
 export const Main: React.FC = () => {
+    const { nextPage, loading, pokemons, getPokemon } = useContext(PokemonContext);
+    const [search, setSearch] = useState("");
 
-    const { nextPage, loading, pokemons } = useContext(PokemonContext)
-    const [search, setSearch] = useState("")
-    
+    useEffect(() => {
+        // Chama getPokemon quando o termo de busca muda
+        const delayDebounceFn = setTimeout(() => {
+            getPokemon(search);
+        }, 300); // Adiciona um delay para evitar chamadas excessivas
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [search, getPokemon]);
+
     return (
         <Container>
             <div className="logo-searchbar"> 
@@ -23,28 +29,28 @@ export const Main: React.FC = () => {
                         id="input-searchbar" 
                         placeholder="Search..."
                         value={search}
-                        onChange={(e) => e.target.value[0] !== ' ' ? setSearch(e.target.value) : null}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
                 </div>  
             </div>
             <div className="list">
-                {pokemons.filter(pokemon => pokemon.name.toLocaleLowerCase().includes(search)).map((pokemon) => {
-                    return (
-                        <List 
-                            key={pokemon.id}
-                            name={pokemon.name}
-                            id={pokemon.id}
-                            abilities={pokemon.abilities}
-                            image={pokemon.sprites.front_default}
-                            types={pokemon.types}
-                        />
-                    )
-                })}
+                {pokemons.map((pokemon) => (
+                    <List 
+                        key={pokemon.id}
+                        name={pokemon.name}
+                        id={pokemon.id}
+                        abilities={pokemon.abilities}
+                        image={pokemon.sprites.front_default}
+                        types={pokemon.types}
+                    />
+                ))}
             </div>
             
             <div className="button">
-                <button onClick={nextPage} disabled={loading}>{loading ? "Loading..." : "Load more"}</button>
+                <button onClick={nextPage} disabled={loading}>
+                    {loading ? "Loading..." : "Load more"}
+                </button>
             </div>            
         </Container>
-    )
-}
+    );
+};
